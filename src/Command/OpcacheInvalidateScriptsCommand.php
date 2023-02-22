@@ -11,7 +11,7 @@
 
 namespace CacheTool\Command;
 
-use Symfony\Component\Console\Helper\Table;
+use CacheTool\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,6 +38,7 @@ class OpcacheInvalidateScriptsCommand extends AbstractOpcacheCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->ensureExtensionLoaded('Zend OPcache');
+        $this->json = $input->hasParameterOption('--json');
         $path = $input->getArgument('path');
         $force = $input->getOption('force');
 
@@ -53,6 +54,7 @@ class OpcacheInvalidateScriptsCommand extends AbstractOpcacheCommand
             ->setRows($this->processFilelist($info['scripts'], $path, $force))
         ;
 
+        $table->setJson($this->json);
         $table->render();
 
         return 0;

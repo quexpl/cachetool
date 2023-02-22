@@ -12,7 +12,7 @@
 namespace CacheTool\Command;
 
 use CacheTool\Util\Formatter;
-use Symfony\Component\Console\Helper\Table;
+use CacheTool\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -53,6 +53,7 @@ class ApcuCacheInfoCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->ensureExtensionLoaded('apcu');
+        $this->json = $input->hasParameterOption('--json');
 
         $info = $this->getCacheTool()->apcu_cache_info(true);
 
@@ -65,6 +66,7 @@ class ApcuCacheInfoCommand extends AbstractCommand
         $table = new Table($output);
         $table->setHeaders(['Name', 'Info']);
         $table->setRows($this->getRows($info));
+        $table->setJson($this->json);
         $table->render();
 
         return 0;

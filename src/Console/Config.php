@@ -31,6 +31,7 @@ class Config implements \ArrayAccess
         'webHost' => null,
 
         'http' => null,
+        'json' => false,
     ];
 
     public function __construct(array $config = [])

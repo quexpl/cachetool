@@ -22,6 +22,8 @@ abstract class AbstractCommand extends Command implements ContainerAwareInterfac
      */
     protected $container;
 
+    protected $json;
+
     /**
      * @return CacheTool
      */

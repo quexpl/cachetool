@@ -11,7 +11,7 @@
 
 namespace CacheTool\Command;
 
-use Symfony\Component\Console\Helper\Table;
+use CacheTool\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -50,6 +50,7 @@ class OpcacheCompileScriptsCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->ensureExtensionLoaded('Zend OPcache');
+        $this->json = $input->hasParameterOption('--json');
         $path = $input->getArgument('path');
 
         $exclude = [];
@@ -86,6 +87,7 @@ class OpcacheCompileScriptsCommand extends AbstractCommand
             ->setHeaders(['Compiled', 'Filename'])
             ->setRows($rows)
         ;
+        $table->setJson($this->json);
         $table->render();
     }
 
@@ -108,6 +110,7 @@ class OpcacheCompileScriptsCommand extends AbstractCommand
             ->setRows([[$compiled]])
         ;
 
+        $table->setJson($this->json);
         $table->render();
     }
 

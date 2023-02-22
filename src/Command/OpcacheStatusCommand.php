@@ -12,7 +12,7 @@
 namespace CacheTool\Command;
 
 use CacheTool\Util\Formatter;
-use Symfony\Component\Console\Helper\Table;
+use CacheTool\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,6 +36,7 @@ class OpcacheStatusCommand extends AbstractOpcacheCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->ensureExtensionLoaded('Zend OPcache');
+        $this->json = $input->hasParameterOption('--json');
 
         $info = $this->getCacheTool()->opcache_get_status(false);
         try {
@@ -69,6 +70,7 @@ class OpcacheStatusCommand extends AbstractOpcacheCommand
         $table = new Table($output);
         $table->setHeaders(['Name', 'Value']);
         $table->setRows(array_map($iterator, array_keys($info)));
+        $table->setJson($this->json);
         $table->render();
     }
 
@@ -80,6 +82,7 @@ class OpcacheStatusCommand extends AbstractOpcacheCommand
         $table = new Table($output);
         $table->setHeaders(['Name', 'Value']);
         $table->setRows($this->getRows($info, $info['opcache_statistics']));
+        $table->setJson($this->json);
         $table->render();
     }
 

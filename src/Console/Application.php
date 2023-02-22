@@ -105,6 +105,7 @@ class Application extends BaseApplication
     protected function getDefaultInputDefinition(): InputDefinition
     {
         $definition = parent::getDefaultInputDefinition();
+        $definition->addOption(new InputOption('--json', null, InputOption::VALUE_OPTIONAL, 'If specified, table output will be converted int json object.'));
         $definition->addOption(new InputOption('--fcgi', null, InputOption::VALUE_OPTIONAL, 'If specified, used as a connection string to FastCGI server.'));
         $definition->addOption(new InputOption('--fcgi-chroot', null, InputOption::VALUE_OPTIONAL, 'If specified, used for mapping script path to chrooted FastCGI server. --tmp-dir need to be chrooted too.'));
         $definition->addOption(new InputOption('--cli', null, InputOption::VALUE_NONE, 'If specified, forces adapter to cli'));
