@@ -9,12 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Console\Helper;
+namespace CacheTool\Console\Helper;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Formatter\WrappableOutputFormatterInterface;
+use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableRows;
+use Symfony\Component\Console\Helper\TableSeparator;
+use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\ConsoleSectionOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -54,6 +59,8 @@ class Table
   private string $displayOrientation = self::DISPLAY_ORIENTATION_DEFAULT;
 
   private static array $styles;
+
+  private bool $json = false;
 
   public function __construct(OutputInterface $output)
   {
@@ -296,6 +303,16 @@ class Table
   }
 
   /**
+   * @return $this
+   */
+  public function setJson(bool $json = true): static
+  {
+    $this->json = $json;
+
+    return $this;
+  }
+
+  /**
    * Renders table to output.
    *
    * Example:
@@ -317,7 +334,27 @@ class Table
     $vertical = self::DISPLAY_ORIENTATION_VERTICAL === $this->displayOrientation;
 
     $rows = [];
-    if ($horizontal) {
+    if ($this->json === true) {
+      $header = $this->headers[0];
+
+      $jsonRows = array_filter($this->rows, function($row) {
+        return !$row instanceof TableSeparator;
+      });
+
+      $jsonData = array_reduce($jsonRows, function($acc, $row) use ($header){
+        $acc[] = array_combine($header, $row);
+        return $acc;
+      }, []);
+
+      $jsonOutput = json_encode($jsonData, JSON_PRETTY_PRINT);
+
+      $this->output->writeln($jsonOutput);
+
+      $this->cleanup();
+      $this->rendered = TRUE;
+      return;
+    }
+    elseif ($horizontal) {
       foreach ($this->headers[0] ?? [] as $i => $header) {
         $rows[$i] = [$header];
         foreach ($this->rows as $row) {
